@@ -1,0 +1,20 @@
+{
+  "name": "nodeinflux",
+  "version": "1.0.0",
+  "description": "This is the rest api to upload Excel,read its content and store into InfluxDB ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rahul Raj",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.5",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "influxdb-nodejs": "^3.1.0",
+    "log4js": "^4.5.1",
+    "multer": "^1.4.2",
+    "xlsx": "^0.14.4"
+  }
+}
