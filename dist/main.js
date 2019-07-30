@@ -193,10 +193,10 @@ var DataService = /** @class */ (function () {
         this.http = http;
         this.Http = Http;
     }
-    DataService.prototype.sendFile = function (file) {
+    DataService.prototype.sendFile = function (file, name) {
         var _this = this;
         return this.http
-            .post('/api/import', file)
+            .post('/api/import?tableName=' + name, file)
             .pipe(function (data) {
             _this.data = data;
             console.log(_this.data);
@@ -234,7 +234,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\" height=\"32\">\n\n  <a class=\"navbar-brand\" style=\"color:white\" height=\"32\">Demo</a>\n</nav>\n<div class=\"container\" class=\"d-flex align-items-start\">\n  <div class=\"card mt-5\" style=\"margin:auto;width: auto;\">\n    <div class=\"card-body\">\n\n      <div class=\"container-fluid\">\n        <div class=\"row\">\n\n\n\n\n          <form [formGroup]=\"form\" (ngSubmit)=\"onSubmit()\">\n\n            <h3 class=\"card-title\">Upload Excel file to import the data in InfluxDB</h3>\n            <div class=\"form-group\" style=\"text-align:center !important\">\n\n              <input type=\"file\" class=\"form-control\" id=\"xlsx\" (change)=\"onFileChange($event)\" #fileInput\n                placeholder=\"XLS/CSV\" required>\n              <small id=\"files\" class=\"form-text text-muted\">Mandatory</small>\n            </div>\n\n\n            <button type=\"submit\" class=\"btn btn-primary\">Submit</button>\n          </form>\n\n\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\" height=\"32\">\n\n  <a class=\"navbar-brand\" style=\"color:white\" height=\"32\">Demo</a>\n</nav>\n<div class=\"container\" class=\"d-flex align-items-start\">\n  <div class=\"card mt-5\" style=\"margin:auto;width: auto;\">\n    <div class=\"card-body\">\n\n      <div class=\"container-fluid\">\n        <div class=\"row\">\n\n\n\n          <form role=\"form\" [formGroup]=\"form\" (ngSubmit)=\"onSubmit()\">\n\n\n            <h3 class=\"card-title\">Upload Excel file to import the data in InfluxDB</h3>\n\n            <div class=\"form-group\" style=\"text-align:center !important\">\n              <input type=\"text\" class=\"form-control\" formControlName=\"tableName\" placeholder=\"Enter Table Name \"\n                required>\n\n            </div>\n            <div class=\"form-group\" style=\"text-align:center !important\">\n              <input type=\"file\" class=\"form-control\" id=\"xlsx\" (change)=\"onFileChange($event)\" #fileInput\n                placeholder=\"XLS/CSV\" required>\n              <small id=\"files\" class=\"form-text text-muted\">Mandatory</small>\n            </div>\n\n\n            <button type=\"submit\" class=\"btn btn-primary\">Submit</button>\n          </form>\n\n\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -263,16 +263,25 @@ var HomeComponent = /** @class */ (function () {
         this.loading = false;
         this.createForm();
     }
-    HomeComponent.prototype.ngOnInit = function () { };
+    HomeComponent.prototype.ngOnInit = function () {
+    };
     HomeComponent.prototype.createForm = function () {
         this.form = this.fb.group({
-            xlsx: null
+            xlsx: null,
+            tableName: [''],
         });
     };
     HomeComponent.prototype.onFileSelection = function (event) {
         console.log(event);
         this.terraformFile = event;
     };
+    Object.defineProperty(HomeComponent.prototype, "f", {
+        get: function () {
+            return this.form.controls;
+        },
+        enumerable: true,
+        configurable: true
+    });
     HomeComponent.prototype.onFileChange = function (event) {
         if (event.target.files.length > 0) {
             var file = event.target.files[0];
@@ -292,11 +301,14 @@ var HomeComponent = /** @class */ (function () {
     HomeComponent.prototype.onSubmit = function () {
         var _this = this;
         var formModel = this.prepareSave();
+        console.log(this.f.tableName.value);
+        this.tableName = this.f.tableName.value;
         this.loading = true;
+        console.log(this.tableName + " table");
         // In a real-world app you'd have a http request / service call here like
         // this.http.post('apiUrl', formModel)
         console.log(formModel);
-        this.dataService.sendFile(formModel).subscribe(function (data) {
+        this.dataService.sendFile(formModel, this.tableName).subscribe(function (data) {
             console.log(data);
             alert('done!');
             _this.loading = false;

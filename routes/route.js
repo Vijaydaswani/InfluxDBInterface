@@ -53,6 +53,7 @@ module.exports = () => {
   router.post("/import", upload.single('file'), function (req, res) {
 
     const file = req.file.originalname
+    const tableName = req.query.tableName;
     log.info("file name " + file);
 
     //Function Call for reading file from UI
@@ -61,15 +62,15 @@ module.exports = () => {
       res.send({ error: "please upload excel file." }).status(400)
     }
     else {
-      client.schema('uitest', {
+      client.schema(tableName, {
         stripUnknown: true,
       });
       return new promise((resolve) => {
         xlData.forEach(data => {
-          client.write('uitest').field(data)
+          client.write(tableName).field(data)
             .then(() => {
 
-              resolve({ result: "data inserted" })
+              resolve({ result: "data inserted in " + tableName })
             })
         })
       })
