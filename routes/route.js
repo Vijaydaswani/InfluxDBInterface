@@ -13,7 +13,7 @@ var xlData;
 module.exports = () => {
 
   //Connection to InfluxDB
-  const client = new Influx('http://3.121.217.120:8086/statsdemo');
+  const client = new Influx('http://localhost:8086/statsdemo');
   //Logger Function
   log4js.configure('./log4js.json');
   let log = log4js.getLogger('');
